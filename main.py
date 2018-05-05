@@ -11,8 +11,8 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as pyplot
 import os
 from threading import Timer
-
-APIUrls = {"87":"http://158.49.112.87:8080/"} #"86":"http://158.49.112.86:8080/","109":"http://158.49.112.109:8080/",
+import pickle
+APIUrls = {"86":"http://158.49.112.86:8080/","109":"http://158.49.112.109:8080/","87":"http://158.49.112.87:8080/"} #
 machines = {"486":"158.49.112.86","487":"158.49.112.87","4109":"158.49.112.109"}
 listOfError = []
 
@@ -43,12 +43,12 @@ for x in keys:
     init_text += "\n"+"\t"*4+x
 
 subcribe = {}
-# try:
-# 	with open("idchats.txt", 'rb') as fichero:
-# 	    subcribe = pickle.load(fichero)
-# except Exception as e:
-# 	with open("idchats.txt", 'wb') as fichero:
-# 		pickle.dump(subcribe, fichero,0)
+try:
+	with open("idchats.txt", 'rb') as fichero:
+	    subcribe = pickle.load(fichero)
+except Exception as e:
+	with open("idchats.txt", 'wb') as fichero:
+		pickle.dump(subcribe, fichero, 0)
 time = 180
 
 def Error( code,  idSensor=None):
@@ -68,7 +68,7 @@ def Error( code,  idSensor=None):
         listOfError.append({"id": code + int(idSensor), "tipo": code, "valor": -1})
         for id, s in subcribe.iteritems():
             if s is True:
-                bot.send_message(id, "Error Sensor " + idSensor )
+                bot.send_message(id, "Error Sensor " + str(idSensor) )
     elif code in machines.keys():
         listOfError.append({"id": code, "tipo": MACHINE_ERROR_CODE, "valor": -1})
         for id, s in subcribe.iteritems():
@@ -209,8 +209,8 @@ def processData():
 def handle_start_help(message):
     subcribe[message.from_user.id] = True
     print subcribe
-    # with open("idchats.txt", 'wb') as fichero:
-    #     pickle.dump(subcribe, fichero, 0)
+    with open("idchats.txt", 'wb') as fichero:
+        pickle.dump(subcribe, fichero, 0)
     bot.send_message(message.from_user.id, init_text)
 
 @bot.message_handler(commands=['GetTemperatureStatus'])
@@ -223,7 +223,7 @@ def handle_GetMoisureStatus(message):
 
 @bot.message_handler(commands=['ProcessAllData'])
 def handle_ProcessAllData(message):
-    bot.send_message(message.from_user.id, processData(), reply_markup=markupHide)
+    bot.send_message(message.from_user.id, processData(), reply_markup=mainKeyBoard)
 
 @bot.message_handler(commands=['GetGraphics'])
 def handle_GetGraphics(message):
@@ -268,14 +268,14 @@ def handle_DectiveKeyboardOptions(message):
 @bot.message_handler(commands=['unsubcribe'])
 def handle_unsubcribe(message):
     subcribe[message.from_user.id]=False
-    # with open("idchats.txt", 'wb') as fichero:
-    # 	pickle.dump(subcribe, fichero,0)
+    with open("idchats.txt", 'wb') as fichero:
+    	pickle.dump(subcribe, fichero,0)
 
 @bot.message_handler(commands=['subcribe'])
 def handle_subcribe(message):
     subcribe[message.from_user.id]=True
-    # with open("idchats.txt", 'wb') as fichero:
-    # 	pickle.dump(subcribe, fichero,0)
+    with open("idchats.txt", 'wb') as fichero:
+    	pickle.dump(subcribe, fichero,0)
 
 @bot.message_handler(commands=['ChangeTimeToCheck']) #func=lambda message: "/ChangeTimeToCheck" in message.text
 def handle_ChangeTimeToCheck(message):
