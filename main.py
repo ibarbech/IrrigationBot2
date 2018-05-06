@@ -332,7 +332,7 @@ def checkMachines():
 def checkSystem():
     global time
     Timer(time, checkSystem).start()
-    # checkMachines()
+    checkMachines()
     sensors = doRequest()
     if sensors is not None:
         for sensor in sensors:
