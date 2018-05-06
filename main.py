@@ -10,6 +10,7 @@ import matplotlib
 
 matplotlib.use('Agg')
 import matplotlib.pyplot as pyplot
+import matplotlib.dates as mdates
 import os
 from threading import Timer
 import pickle
@@ -177,7 +178,9 @@ def processDataAndSendGraphics(data, message, text=""):
     lists = sorted(dictDays.items())  # sorted by key, return a list of tuples
     # print lists
     x, y = zip(*lists)  # unpack a list of pairs into two tuples
+    pyplot.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d/%m/%Y'))
     pyplot.plot(x, y)
+    pyplot.gcf().autofmt_xdate()
     pyplot.title(text)
     # pyplot.show()
     pyplot.xticks(rotation=90)
