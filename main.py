@@ -157,23 +157,25 @@ def processDataAndSendGraphics(data, message, text=""):
     dictDays = {}
     for dato in data:
         f = dato["fecha"].replace(",", "").split(" ")
-        d = str(f[3] + "-" + monthToNum(f[2]) + "-" + f[1])
+        d = datetime.strptime(str(f[3] + "-" + monthToNum(f[2]) + "-" + f[1]),"%Y-%m-%d").date()
         if d not in dictDays.keys():
             dictDays[d] = []
         else:
             dictDays[d].append(dato["valor"])
     for k, v in dictDays.iteritems():
         dictDays[k] = np.mean(v)
-    listDates = [datetime.strptime(x, "%Y-%m-%d").date() for x in dictDays.keys()]
-    d1 = min(listDates)
+    # listDates = [datetime.strptime(x, "%Y-%m-%d").date() for x in dictDays.keys()]
+    # listDates = dictDays.keys()
+    d1 = min(dictDays.keys())
     # d2 = max(listDates)
     d2 = datetime.date(datetime.now())
     delta = d2 - d1
     for i in range(delta.days + 1):
-        d = (d1 + timedelta(days=i)).__str__()
+        d = d1 + timedelta(days=i)
         if d not in dictDays.keys():
             dictDays[d] = 0
     lists = sorted(dictDays.items())  # sorted by key, return a list of tuples
+    # print lists
     x, y = zip(*lists)  # unpack a list of pairs into two tuples
     pyplot.plot(x, y)
     pyplot.title(text)
@@ -332,7 +334,7 @@ def checkMachines():
 def checkSystem():
     global time
     Timer(time, checkSystem).start()
-    checkMachines()
+    # checkMachines()
     sensors = doRequest()
     if sensors is not None:
         for sensor in sensors:
